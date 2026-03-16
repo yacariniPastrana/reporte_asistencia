@@ -1,0 +1,107 @@
+<div class="dashboard-container">
+  
+  <div class="header-section">
+    <h1>Dashboard de Asistencia - {{ fechaHoy | date:'dd/MM/yyyy' }}</h1>
+    <p>Sincronización en tiempo real con Biométricos Cloud Sync</p>
+  </div>
+
+  <div *ngIf="isLoading" class="loader-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando datos...</p>
+  </div>
+
+  <div *ngIf="!isLoading && asistencias.length > 0" class="stats-grid">
+    <mat-card class="stat-card ingresos">
+      <div class="icon-circle">
+        <mat-icon>login</mat-icon>
+      </div>
+      <div class="stat-info">
+        <h3>Ingresos</h3>
+        <p class="value">{{ stats.ingresos }}</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card refrigerio">
+      <div class="icon-circle">
+        <mat-icon>restaurant</mat-icon>
+      </div>
+      <div class="stat-info">
+        <h3>Refrigerios</h3>
+        <p class="value">{{ stats.refrigerios }}</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card salidas">
+      <div class="icon-circle">
+        <mat-icon>logout</mat-icon>
+      </div>
+      <div class="stat-info">
+        <h3>Salidas</h3>
+        <p class="value">{{ stats.salidas }}</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card total">
+      <div class="icon-circle">
+        <mat-icon>groups</mat-icon>
+      </div>
+      <div class="stat-info">
+        <h3>Total Marcas</h3>
+        <p class="value">{{ stats.total }}</p>
+      </div>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!isLoading" class="content-grid">
+    <mat-card class="table-card">
+      <mat-card-header>
+        <mat-card-title>Marcaciones Recientes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="asistencias" class="mat-elevation-z0 full-width">
+          
+          <ng-container matColumnDef="empleado">
+            <th mat-header-cell *matHeaderCellDef> Empleado </th>
+            <td mat-cell *matCellDef="let element"> {{element.nombreEmpleado}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="documento">
+            <th mat-header-cell *matHeaderCellDef> Documento </th>
+            <td mat-cell *matCellDef="let element"> {{element.documento || '---'}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="tipo">
+            <th mat-header-cell *matHeaderCellDef> Evento </th>
+            <td mat-cell *matCellDef="let element"> 
+              <span class="badge" [ngClass]="element.tipoRegistro?.toLowerCase()">
+                {{element.tipoRegistro}}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="fecha_hora">
+            <th mat-header-cell *matHeaderCellDef> Hora Exacta </th>
+            <td mat-cell *matCellDef="let element"> {{ element.hora || formatTime(element.fechaHora) }} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Distribución de Asistencia</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas #statsChart></canvas>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!isLoading && asistencias.length === 0" class="empty-state">
+    <mat-icon>history</mat-icon>
+    <p>Aún no se han registrado marcaciones el día de hoy.</p>
+  </div>
+</div>

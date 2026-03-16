@@ -1,0 +1,114 @@
+.empleados-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-bottom: 50px;
+
+  .header-section {
+    margin-bottom: 30px;
+    h1 {
+      margin-bottom: 5px;
+      color: #333;
+      font-size: 1.8rem;
+    }
+    p {
+      color: #777;
+    }
+  }
+
+  .table-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    padding: 20px;
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 20px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .search-field {
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .admin-notice {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(63, 81, 181, 0.05);
+        padding: 8px 16px;
+        border-radius: 8px;
+        color: #3f51b5;
+        font-size: 0.9rem;
+        font-weight: 500;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+
+  .loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+    
+    p {
+      margin-top: 15px;
+      color: #3f51b5;
+      font-weight: 500;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .id-badge {
+    background-color: #f0f2f5;
+    color: #555;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .no-doc {
+    font-style: italic;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .view-only {
+    font-size: 0.8rem;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  tr.mat-row:hover {
+    background: #fafafa;
+  }
+
+  th.mat-header-cell {
+    font-weight: 700;
+    color: #333;
+    background: #f8f9fb;
+    padding: 15px;
+  }
+
+  td.mat-cell {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+}

@@ -1,0 +1,151 @@
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-bottom: 50px;
+
+  .header-section {
+    margin-bottom: 30px;
+    h1 {
+      margin-bottom: 5px;
+      color: #333;
+      font-size: 1.8rem;
+    }
+    p {
+      color: #777;
+    }
+  }
+
+  .loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+    p {
+      margin-top: 20px;
+      font-weight: 500;
+      color: #3f51b5;
+    }
+
+    .small-text {
+      font-size: 0.8rem;
+      color: #999;
+    }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+
+    .stat-card {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 20px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+
+      .icon-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+
+        mat-icon {
+          font-size: 30px;
+          width: 30px;
+          height: 30px;
+          color: white;
+        }
+      }
+
+      .stat-info {
+        h3 {
+          margin: 0;
+          font-size: 0.9rem;
+          color: #777;
+        }
+        .value {
+          margin: 0;
+          font-size: 2rem;
+          font-weight: 700;
+          color: #333;
+        }
+      }
+
+      &.ingresos .icon-circle { background-color: #3f51b5; }
+      &.refrigerio .icon-circle { background-color: #ff4081; }
+      &.salidas .icon-circle { background-color: #4caf50; }
+      &.total .icon-circle { background-color: #ffc107; }
+    }
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+
+    @media (max-width: 1000px) {
+      grid-template-columns: 1fr;
+    }
+
+    mat-card {
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    }
+
+    .table-card {
+      min-height: 400px;
+    }
+
+    .chart-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    &.ingreso { background: #e8eaf6; color: #3f51b5; }
+    &.refrigerio { background: #fce4ec; color: #d81b60; }
+    &.salida { background: #e8f5e9; color: #2e7d32; }
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 0;
+    color: #999;
+
+    mat-icon {
+      font-size: 60px;
+      width: 60px;
+      height: 60px;
+      margin-bottom: 20px;
+    }
+  }
+}

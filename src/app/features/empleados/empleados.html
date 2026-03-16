@@ -1,0 +1,74 @@
+<div class="empleados-container">
+  
+  <div class="header-section">
+    <h1>Gestión de Personal</h1>
+    <p>Lista oficial de empleados sincronizada desde los equipos biométricos</p>
+  </div>
+
+  <mat-card class="table-card">
+    <div class="table-header">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar empleado</mat-label>
+        <input matInput (keyup)="filter(input.value)" placeholder="Nombre, ID o Documento" #input>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <div class="admin-notice" *ngIf="isAdmin">
+        <mat-icon color="primary">admin_panel_settings</mat-icon>
+        <span>Modo Administrador: Edición habilitada</span>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loader-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Cargando personal...</p>
+    </div>
+
+    <div *ngIf="!isLoading">
+      <table mat-table [dataSource]="filteredEmpleados" class="full-width">
+        
+        <ng-container matColumnDef="id_biometrico">
+          <th mat-header-cell *matHeaderCellDef> ID Biométrico </th>
+          <td mat-cell *matCellDef="let element"> 
+            <span class="id-badge">#{{element.idBiometrico}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> Nombre Completo </th>
+          <td mat-cell *matCellDef="let element"> {{element.nombreCompleto}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="documento">
+          <th mat-header-cell *matHeaderCellDef> Documento </th>
+          <td mat-cell *matCellDef="let element"> 
+            <span *ngIf="element.numeroDocumento">
+              <strong>{{element.tipoDocumento}}:</strong> {{element.numeroDocumento}}
+            </span>
+            <span *ngIf="!element.numeroDocumento" class="no-doc">Sin registrar</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="primary" 
+                    *ngIf="isAdmin"
+                    (click)="editarDocumento(element)"
+                    matTooltip="Editar documento">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <span *ngIf="!isAdmin" class="view-only">Solo lectura</span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No se encontraron empleados con el término "{{input.value}}"</td>
+        </tr>
+      </table>
+    </div>
+  </mat-card>
+</div>

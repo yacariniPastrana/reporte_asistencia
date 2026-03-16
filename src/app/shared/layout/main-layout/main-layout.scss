@@ -1,0 +1,113 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 260px;
+  background-color: #fff;
+  border-right: 1px solid #eee;
+
+  .logo-sidebar {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .company-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #3f51b5;
+      letter-spacing: 1px;
+    }
+  }
+
+  mat-nav-list {
+    padding-top: 10px;
+
+    a {
+      margin: 4px 8px;
+      border-radius: 8px;
+      color: #555;
+
+      &.active-link {
+        background-color: rgba(63, 81, 181, 0.1);
+        color: #3f51b5;
+        font-weight: 500;
+
+        mat-icon {
+          color: #3f51b5;
+        }
+      }
+
+      mat-icon {
+        color: #777;
+      }
+    }
+  }
+}
+
+.main-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .user-role-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 15px;
+    letter-spacing: 0.5px;
+  }
+}
+
+.main-content {
+  min-height: calc(100vh - 120px);
+  padding: 20px;
+  background-color: #fafafa;
+}
+
+.corporate-footer {
+  padding: 20px;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  text-align: center;
+  color: #666;
+
+  p {
+    margin: 2px 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .small-text {
+    font-size: 0.75rem;
+    color: #999;
+  }
+}
+
+// Optimization for Print (A4 Reports)
+@media print {
+  .sidenav-container {
+    height: auto !important;
+  }
+  
+  .main-content {
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  .corporate-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px dashed #ccc;
+    padding: 10px 0;
+  }
+}

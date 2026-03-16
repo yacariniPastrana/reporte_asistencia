@@ -1,0 +1,39 @@
+
+// Custom Theme for ST Enterprise
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$biometrico-primary: mat.m2-define-palette(mat.$m2-indigo-palette);
+$biometrico-accent:  mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
+$biometrico-warn:    mat.m2-define-palette(mat.$m2-red-palette);
+
+$biometrico-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $biometrico-primary,
+    accent: $biometrico-accent,
+    warn: $biometrico-warn,
+  )
+));
+
+@include mat.all-component-themes($biometrico-theme);
+
+// Global Styles
+html, body { 
+  height: 100%; 
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+// Media print for A4 Reports
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    -webkit-print-color-adjust: exact;
+  }
+}

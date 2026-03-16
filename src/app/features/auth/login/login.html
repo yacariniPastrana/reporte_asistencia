@@ -1,0 +1,55 @@
+<div class="login-container">
+  <div class="top-logo">
+    <svg width="120" height="120" viewBox="0 0 1634 1583" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <g transform="matrix(1,0,0,1,-347.849848,-186.648761)">
+        <g transform="matrix(2.236328,0,0,2.236328,0,0)">
+            <path d="M883.953,287.304C871.427,225.081 786.672,145.468 630.636,190.969C556.644,212.545 488.791,265.354 477.814,273.897C400.683,333.926 358.666,392.598 392.93,480.347C394.552,484.501 397.73,487.774 393.649,486.161C392.472,485.696 380.983,475.929 379.904,475.012C326.048,429.226 302.704,385.653 289.269,350.58C288.277,347.992 290.343,343.736 320.044,309.109C424.507,187.323 677.202,-4.44 836.222,164.757C882.797,214.313 884.676,273.174 885.676,284.516C885.699,284.777 886.593,294.931 883.953,287.304Z" style="fill:#0c7cb9;"/>
+        </g>
+        <g transform="matrix(2.236328,0,0,2.236328,0,0)">
+            <path d="M656.359,398.546C651.626,388.736 656.819,394.425 659.733,396.217C690.824,422.041 732.357,464.676 753.211,526.584C754.106,529.241 747.754,536.833 733.959,553.868C683.804,615.8 646.715,644.293 627.188,661.127C618.515,668.605 552.232,721.173 486.335,749.102C479.801,751.871 324.78,829.765 209.867,717.12C192.692,700.284 180.345,678.319 178.27,674.626C161.18,644.224 156.441,606.629 155.562,595.087C155.465,593.815 155.821,593.107 155.946,593.411C156.79,595.471 159.479,607.373 160.625,607.449C167.814,624.602 197.947,705.086 342.487,699.224C480.278,693.636 625.452,570.068 653.041,508.288C674.247,460.8 664.225,424.094 656.359,398.546Z" style="fill:#0d7cb8;"/>
+        </g>
+        <g transform="matrix(2.236328,0,0,2.236328,0,0)">
+            <path d="M588.029,495.162C587.946,495.96 587.863,496.758 587.781,497.557C583.568,552.135 535.523,564.911 512.497,565.066C497.714,565.165 328.83,566.301 327.706,564.41C327.181,563.528 327.78,563.525 331.015,559.139C364.339,513.975 363.777,513.641 366.864,509.868C368.45,507.929 490.132,509.396 511.495,509.002C532.989,508.606 536.805,493.647 535.133,484.56C531.574,465.211 512.379,468.586 476.5,468.535C399.782,468.428 389.95,409.764 399.778,377.581C418.765,315.412 472.08,321.152 483.5,321.148C558.837,321.123 565.787,318.792 561.951,323.764C555.443,332.198 524.923,374.443 524.196,375.215C522.137,377.399 490.393,375.941 468.497,376.372C447.03,376.795 444.252,401.371 457.682,409.212C473.209,418.277 531.442,400.658 565.268,430.761C591.443,454.054 586.92,476.595 587.892,479.324C590.672,487.133 589.736,471.238 589.694,470.52C588.341,447.563 589.609,378.921 589.056,377.602C587.981,375.037 554.466,376.754 544.523,376.425C544.262,376.416 542.791,376.215 545.001,373.195C548.013,369.08 582.1,322.503 582.805,321.874C583.493,321.26 583.582,321.105 675.5,321.149C766.731,321.194 768.11,320.743 767.961,322.545C767.927,322.954 729.551,375.384 729.464,375.462C726.956,377.698 644.559,375.236 642.849,376.817C641.701,377.878 642.633,482.491 642.333,499.5C642.257,503.785 636.384,508.449 633.997,510.983C590.486,557.169 590.569,557.653 589.499,557.502C588.239,557.324 589.737,504.084 589.868,499.441C589.879,499.068 590.085,474.714 588.029,495.162Z" style="fill:#7a7f80;"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Acceso al Sistema</mat-card-title>
+      <mat-card-subtitle>Biométrico Cloud Sync</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Usuario</mat-label>
+          <input matInput formControlName="username" placeholder="Ej: USO001" autocomplete="username">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+            El usuario es obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" autocomplete="current-password">
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+            La contraseña es obligatoria
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" class="full-width login-button" [disabled]="loginForm.invalid" type="submit">
+          INGRESAR AL PANEL
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer>
+      <p class="footer-text">© 2026 ST Enterprise - Soluciones Tecnológicas</p>
+    </mat-card-footer>
+  </mat-card>
+</div>

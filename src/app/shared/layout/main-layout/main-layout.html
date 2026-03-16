@@ -1,0 +1,63 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="(isHandset$ | async) === false">
+    
+    <div class="logo-sidebar no-print">
+      <img src="assets/images/logo-st.svg" alt="ST Enterprise Logo" width="50">
+      <span class="company-name">ST Enterprise</span>
+    </div>
+
+    <mat-divider class="no-print"></mat-divider>
+
+    <mat-nav-list class="no-print">
+      <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </a>
+      
+      <a mat-list-item routerLink="/empleados" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>groups</mat-icon>
+        <span matListItemTitle>Empleados</span>
+      </a>
+
+      <a mat-list-item routerLink="/reportes" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>description</mat-icon>
+        <span matListItemTitle>Reportes</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="no-print main-toolbar">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      
+      <span>Gestión Biométrico Cloud</span>
+      
+      <span class="spacer"></span>
+      
+      <span class="user-role-badge">{{ userRole?.toUpperCase() }}</span>
+      
+      <button mat-icon-button (click)="logout()" matTooltip="Cerrar Sesión">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+
+    <footer class="corporate-footer">
+      <p>© 2026 ST Enterprise - Sistema de Control Biométrico de Asistencia en Tiempo Real.</p>
+      <p class="small-text">Soluciones Tecnológicas Enterprise S.A.C - www.solucionestecnologicasenterprise.com</p>
+    </footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>
