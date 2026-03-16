@@ -4,20 +4,28 @@
   display: flex;
   flex-direction: column;
   justify-content: center; // Centrado vertical
-  align-items: center;     // Centrado horizontal
+  align-items: center; // Centrado horizontal
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 0;
   overflow: hidden;
   position: relative;
 
   .top-logo {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Determine the physical space it occupies in the layout */
+    width: auto;
+    height: auto;
+    margin-bottom: 0px;
     z-index: 5;
     opacity: 0.8;
     filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+    /* Scale the container visually. We will use the translate() part to adjust positioning together: 
+    /* Scale the container visually. We will use the translate() part to adjust positioning together:
+       translateX (1st value: positive goes right, negative left),
+       translateY (2nd value: positive goes down, negative up) */
+    transform: scale(1.3) translate(50px, 25px);
   }
 
   .login-card {
@@ -29,6 +37,7 @@
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     z-index: 10;
+    margin-top: -20px;
 
 
     mat-card-header {
