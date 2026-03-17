@@ -37,9 +37,12 @@ export class EmpleadosComponent implements OnInit {
   searchTerm = '';
   isAdmin = localStorage.getItem('user_role') === 'admin';
 
-  displayedColumns: string[] = ['id_biometrico', 'nombre', 'documento', 'acciones'];
+  displayedColumns: string[] = ['id_biometrico', 'nombre', 'documento'];
 
   ngOnInit(): void {
+    if (this.isAdmin) {
+      this.displayedColumns.push('acciones');
+    }
     this.cargarEmpleados();
   }
 

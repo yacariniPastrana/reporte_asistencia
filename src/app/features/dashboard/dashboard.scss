@@ -4,14 +4,38 @@
   padding-bottom: 50px;
 
   .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 30px;
-    h1 {
-      margin-bottom: 5px;
-      color: #333;
-      font-size: 1.8rem;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    .header-titles {
+      h1 {
+        margin-bottom: 5px;
+        color: #333;
+        font-size: 1.8rem;
+      }
+      p {
+        color: #777;
+        margin: 0;
+      }
     }
-    p {
-      color: #777;
+
+    button {
+      height: 48px;
+      border-radius: 8px;
+    }
+
+    .spin {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
     }
   }
 
@@ -70,6 +94,7 @@
       }
 
       .stat-info {
+        flex-grow: 1;
         h3 {
           margin: 0;
           font-size: 0.9rem;
@@ -80,6 +105,37 @@
           font-size: 2rem;
           font-weight: 700;
           color: #333;
+        }
+
+        /* Dual metric values specific styling */
+        .dual-values {
+          display: flex;
+          justify-content: flex-start;
+          margin-top: 5px;
+          gap: 20px;
+
+          .dual-item {
+            display: flex;
+            flex-direction: column;
+
+            .label {
+              font-size: 0.7rem;
+              color: #999;
+              text-transform: uppercase;
+              font-weight: 600;
+              margin-bottom: 2px;
+            }
+            .value {
+              font-size: 1.4rem;
+              line-height: 1.1;
+              color: #333;
+            }
+          }
+          
+          @media (max-width: 400px) {
+            flex-direction: column;
+            gap: 10px;
+          }
         }
       }
 
@@ -102,10 +158,15 @@
     mat-card {
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+      overflow: hidden; /* Prevent horizontal stretching on mobile */
     }
 
     .table-card {
       min-height: 400px;
+      
+      mat-card-content {
+        overflow-x: auto; /* Enable horizontal touch-scrolling for wide tables */
+      }
     }
 
     .chart-card {

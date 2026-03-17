@@ -24,7 +24,7 @@
       <p>Cargando personal...</p>
     </div>
 
-    <div *ngIf="!isLoading">
+    <div *ngIf="!isLoading" class="table-container">
       <table mat-table [dataSource]="filteredEmpleados" class="full-width">
         
         <ng-container matColumnDef="id_biometrico">
@@ -66,7 +66,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="4">No se encontraron empleados con el término "{{input.value}}"</td>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">No se encontraron empleados con el término "{{input.value}}"</td>
         </tr>
       </table>
     </div>

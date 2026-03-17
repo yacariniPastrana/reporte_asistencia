@@ -20,6 +20,15 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
     padding: 20px;
 
+    .table-container {
+      overflow-x: auto;
+      width: 100%;
+      
+      table {
+        min-width: 600px;
+      }
+    }
+
     .table-header {
       display: flex;
       justify-content: space-between;

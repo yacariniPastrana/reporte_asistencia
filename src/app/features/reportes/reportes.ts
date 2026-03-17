@@ -10,6 +10,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSelectModule } from '@angular/material/select';
 import { NgxPrintModule } from 'ngx-print';
 import { ApiService } from '../../core/services/api.service';
 import { DateTime } from 'luxon';
@@ -31,6 +32,7 @@ import Swal from 'sweetalert2';
     MatNativeDateModule,
     MatProgressSpinnerModule,
     MatDividerModule,
+    MatSelectModule,
     NgxPrintModule
   ],
   templateUrl: './reportes.html',
@@ -44,7 +46,8 @@ export class ReportesComponent {
 
   reportForm: FormGroup = this.fb.group({
     desde: [DateTime.now().minus({ days: 7 }).toJSDate(), Validators.required],
-    hasta: [DateTime.now().toJSDate(), Validators.required]
+    hasta: [DateTime.now().toJSDate(), Validators.required],
+    tipoEvento: ['TODOS'] // Nuevo filtro
   });
 
   historial: any[] = [];
@@ -52,17 +55,26 @@ export class ReportesComponent {
   // IDs de columnas que DEBEN coincidir con el HTML
   displayedColumns: string[] = ['col-fecha', 'col-hora', 'col-empleado', 'col-documento', 'col-evento'];
 
+  eventosDisponibles = [
+    { value: 'TODOS', label: 'Todos los eventos' },
+    { value: 'INGRESO', label: 'Ingreso Laboral' },
+    { value: 'INICIO REFRIGERIO', label: 'Inicio Refrigerio' },
+    { value: 'FIN REFRIGERIO', label: 'Fin Refrigerio' },
+    { value: 'SALIDA', label: 'Salida Laboral' }
+  ];
+
   consultarHistorial(): void {
     if (this.reportForm.invalid) return;
 
     this.isLoading = true;
     const desdeStr = DateTime.fromJSDate(this.reportForm.value.desde).toFormat('yyyy-MM-dd');
     const hastaStr = DateTime.fromJSDate(this.reportForm.value.hasta).toFormat('yyyy-MM-dd');
+    const tipoEventoSeleccionado = this.reportForm.value.tipoEvento;
 
     this.apiService.getHistorial(desdeStr, hastaStr).subscribe({
       next: (data) => {
         // Mapeamos los datos para asegurar que tengan los nombres que esperamos
-        this.historial = data.map((item: any) => ({
+        let procesado = data.map((item: any) => ({
           ...item,
           // Si no hay fecha en el item, usamos la del formulario como referencia
           fechaMostrada: item.fechaDia || item.fecha_dia || item.fecha || desdeStr,
@@ -72,9 +84,16 @@ export class ReportesComponent {
           eventoMostrado: item.tipoRegistro || '---'
         }));
 
+        // Aplicamos el nuevo filtro de eventos si no es "TODOS"
+        if (tipoEventoSeleccionado !== 'TODOS') {
+           procesado = procesado.filter((item: any) => item.eventoMostrado.includes(tipoEventoSeleccionado));
+        }
+
+        this.historial = procesado;
+
         this.isLoading = false;
-        if (data.length === 0) {
-          Swal.fire('Información', 'No se encontraron registros', 'info');
+        if (this.historial.length === 0) {
+          Swal.fire('Información', 'No se encontraron registros para estos filtros', 'info');
         }
       },
       error: () => {
