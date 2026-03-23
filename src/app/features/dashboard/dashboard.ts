@@ -54,14 +54,45 @@ export class DashboardComponent implements OnInit, OnDestroy {
     salidas: 0
   };
 
-  cumpleanosMes = [
-    { nombre: 'Juan Pérez', fecha: '12 de Marzo', iniciales: 'JP', color: '#ff4081' },
-    { nombre: 'María Gómez', fecha: '28 de Marzo', iniciales: 'MG', color: '#3f51b5' },
-    { nombre: 'Carlos Ruiz', fecha: '05 de Abril', iniciales: 'CR', color: '#4caf50' }
-  ];
+  cumpleanosMes: any[] = [];
 
   ngOnInit(): void {
     this.cargarDatos();
+    this.cargarCumpleanos();
+  }
+
+  cargarCumpleanos(): void {
+    this.apiService.getEmpleados().subscribe({
+      next: (empleados: any[]) => {
+        const mesActual = DateTime.now().month;
+        const colores = ['#ff4081', '#3f51b5', '#4caf50', '#ff9800', '#00bcd4', '#9c27b0'];
+        
+        let proximos = empleados
+          .filter(e => e.fechaCumpleanos) // Solo los que tengan la fecha seteada
+          .map(e => {
+            const dt = DateTime.fromISO(e.fechaCumpleanos).setLocale('es');
+            return {
+              nombre: e.nombreCompleto || e.nombres || e.nombre,
+              fecha: dt.toFormat('dd \'de\' MMMM'), // Ej: "15 de mayo"
+              mes: dt.month,
+              dia: dt.day,
+              iniciales: this.obtenerIniciales(e.nombreCompleto || e.nombres || 'User'),
+              color: colores[Math.floor(Math.random() * colores.length)]
+            };
+          })
+          .filter(e => e.mes === mesActual) // Solo los que cumplen en este mismo mes
+          .sort((a, b) => a.dia - b.dia);   // Ordenar del que cumple primero al último del mes
+        
+        this.cumpleanosMes = proximos;
+      }
+    });
+  }
+
+  obtenerIniciales(nombre: string): string {
+    if (!nombre) return 'U';
+    const partes = nombre.trim().split(' ').filter(p => p.length > 0);
+    if (partes.length === 1) return partes[0].charAt(0).toUpperCase();
+    return (partes[0].charAt(0) + partes[1].charAt(0)).toUpperCase();
   }
 
   ngOnDestroy(): void {
