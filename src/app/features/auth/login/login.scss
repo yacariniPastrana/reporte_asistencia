@@ -85,6 +85,38 @@
       }
     }
 
+    .spinner-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 10px;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+
+      mat-spinner {
+        margin-bottom: 20px;
+      }
+
+      h3 {
+        color: #3f51b5;
+        font-weight: 500;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+      }
+
+      p {
+        color: #666;
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .footer-text {
       text-align: center;
       font-size: 0.8rem;

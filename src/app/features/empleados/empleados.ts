@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiService } from '../../core/services/api.service';
+import { LoaderLogoComponent } from '../../shared/components/loader-logo/loader-logo.component';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -23,7 +24,8 @@ import Swal from 'sweetalert2';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    LoaderLogoComponent
   ],
   templateUrl: './empleados.html',
   styleUrl: './empleados.scss'

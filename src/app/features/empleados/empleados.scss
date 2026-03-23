@@ -66,19 +66,7 @@
     }
   }
 
-  .loader-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 0;
-    
-    p {
-      margin-top: 15px;
-      color: #3f51b5;
-      font-weight: 500;
-    }
-  }
+  // El loader global se hereda de styles.scss
 
   .full-width {
     width: 100%;

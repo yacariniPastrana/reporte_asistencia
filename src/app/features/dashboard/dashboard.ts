@@ -6,7 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatListModule } from '@angular/material/list';
 import { ApiService } from '../../core/services/api.service';
+import { LoaderLogoComponent } from '../../shared/components/loader-logo/loader-logo.component';
 import Chart from 'chart.js/auto';
 import { DateTime } from 'luxon';
 
@@ -20,7 +22,9 @@ import { DateTime } from 'luxon';
     MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatListModule,
+    LoaderLogoComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
@@ -49,6 +53,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     refrigerioOut: 0,
     salidas: 0
   };
+
+  cumpleanosMes = [
+    { nombre: 'Juan Pérez', fecha: '12 de Marzo', iniciales: 'JP', color: '#ff4081' },
+    { nombre: 'María Gómez', fecha: '28 de Marzo', iniciales: 'MG', color: '#3f51b5' },
+    { nombre: 'Carlos Ruiz', fecha: '05 de Abril', iniciales: 'CR', color: '#4caf50' }
+  ];
 
   ngOnInit(): void {
     this.cargarDatos();

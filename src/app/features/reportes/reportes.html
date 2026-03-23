@@ -1,5 +1,5 @@
 <div class="reportes-container">
-  
+
   <div class="header-section no-print">
     <h1>Reportes de Asistencia</h1>
     <p>Consulte e imprima el historial detallado de marcas</p>
@@ -25,27 +25,18 @@
           <mat-datepicker #picker2></mat-datepicker>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Tipo de Evento</mat-label>
-          <mat-select formControlName="tipoEvento">
-            <mat-option *ngFor="let evento of eventosDisponibles" [value]="evento.value">
-              {{ evento.label }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
         <div class="actions">
-          <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
+          <button mat-raised-button color="primary" type="submit" [disabled]="isLoading || reportForm.invalid">
             <mat-icon>search</mat-icon> CONSULTAR
           </button>
-          
-          <button mat-raised-button color="accent" 
-                  *ngIf="historial.length > 0"
-                  [printSectionId]="'print-section'" 
-                  ngxPrint 
-                  [useExistingCss]="true"
-                  type="button">
-            <mat-icon>print</mat-icon> IMPRIMIR EN PDF
+
+          <button mat-raised-button color="accent" *ngIf="dataSource.length > 0 && dateColumns.length > 0"
+            [printSectionId]="'print-section'" ngxPrint [useExistingCss]="true" type="button">
+            <mat-icon>print</mat-icon> IMPRIMIR PDF
+          </button>
+
+          <button mat-raised-button color="warn" type="button" *ngIf="isAdmin" (click)="abrirNuevamMarcaManual()">
+            <mat-icon>add_alert</mat-icon> MARCA MANUAL
           </button>
         </div>
       </form>
@@ -53,64 +44,92 @@
   </mat-card>
 
   <div *ngIf="isLoading" class="loader-container">
-    <mat-spinner diameter="40"></mat-spinner>
-    <p>Generando reporte...</p>
+    <app-loader-logo></app-loader-logo>
+    <p>Armando consolidado de reportes...</p>
   </div>
 
   <!-- SECCIÓN DE IMPRESIÓN -->
-  <div id="print-section" class="print-area" *ngIf="historial.length > 0">
+  <div id="print-section" class="print-area" *ngIf="dataSource.length > 0 && dateColumns.length > 0">
     <div class="report-header">
-      <div class="header-top">
-        <div class="logo-company">
-          <img src="assets/images/logo-st.svg" alt="ST Enterprise" width="65">
-          <div class="company-info">
-            <h2>ST ENTERPRISE S.A.C</h2>
-            <p>Soluciones Tecnológicas para el Control de Personal</p>
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="logo-company" style="display: flex; align-items: center; gap: 10px;">
+          <img src="assets/images/logo-st.svg" alt="ST Enterprise" width="50"
+            onerror="this.src='https://cdn-icons-png.flaticon.com/512/3616/3616215.png'">
+          <div class="company-info" style="font-size: 0.75rem; text-align: left;">
+            <h2 style="margin: 0; font-size: 1rem; color: #333;">ST ENTERPRISE S.A.C</h2>
+            <p style="margin: 0; color: #666;">Soluciones Tecnológicas</p>
           </div>
         </div>
-        <div class="report-title">
-          <h1>REPORTE DETALLADO DE ASISTENCIA</h1>
-          <p>Rango: {{ rangeDates }}</p>
+        <div class="report-title" style="text-align: right;">
+          <h1 style="margin: 0; font-size: 1.15rem; color: #1a237e;">REPORTE DETALLADO DE ASISTENCIA</h1>
+          <p style="margin: 0; font-size: 0.85rem; color: #555;">Rango: {{ rangeDates }}</p>
         </div>
       </div>
-      <mat-divider></mat-divider>
+      <mat-divider style="margin: 10px 0;"></mat-divider>
     </div>
 
     <div class="table-container">
-      <table mat-table [dataSource]="historial" class="full-width report-table">
-      
-      <ng-container matColumnDef="col-fecha">
-        <th mat-header-cell *matHeaderCellDef> Fecha </th>
-        <td mat-cell *matCellDef="let element"> {{ element.fechaMostrada | date:'dd/MM/yyyy' }} </td>
-      </ng-container>
+      <table mat-table [dataSource]="dataSource" class="full-width report-table matrix-table">
 
-      <ng-container matColumnDef="col-hora">
-        <th mat-header-cell *matHeaderCellDef> Hora </th>
-        <td mat-cell *matCellDef="let element"> {{ element.horaMostrada }} </td>
-      </ng-container>
+        <!-- Columna Empleado Fija -->
+        <ng-container matColumnDef="col-empleado" sticky>
+          <th mat-header-cell *matHeaderCellDef class="header-empleado"> EMPLEADO </th>
+          <td mat-cell *matCellDef="let element" class="cell-empleado">
+            <strong>{{ element.nombreEmpleado }}</strong><br>
+            <small class="text-muted">(ID Bio: {{ element.idBiometrico }})</small>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="col-empleado">
-        <th mat-header-cell *matHeaderCellDef> Empleado </th>
-        <td mat-cell *matCellDef="let element"> {{ element.empleadoMostrado }} </td>
-      </ng-container>
+        <!-- Columnas Dinamicas de Fechas -->
+        <ng-container *ngFor="let col of dateColumns" [matColumnDef]="col">
+          <th mat-header-cell *matHeaderCellDef class="header-day"> {{ formatHeaderDate(col) }} </th>
+          <td mat-cell *matCellDef="let element" class="cell-day">
 
-      <ng-container matColumnDef="col-documento">
-        <th mat-header-cell *matHeaderCellDef> Documento </th>
-        <td mat-cell *matCellDef="let element"> {{ element.documentoMostrado }} </td>
-      </ng-container>
+            <div
+              *ngIf="element.dias[col] && (element.dias[col].entrada || element.dias[col].salida || element.dias[col].inicioRefrigerio || element.dias[col].finRefrigerio); else noData"
+              class="day-data">
+              <div class="time-row">
+                <span class="label">Ing:</span>
+                <span class="value">{{ formatTimeAMPM(element.dias[col].entrada) }}</span>
+              </div>
+              <div class="time-row">
+                <span class="label">Sal:</span>
+                <span class="value">{{ formatTimeAMPM(element.dias[col].salida) }}</span>
+              </div>
 
-      <ng-container matColumnDef="col-evento">
-        <th mat-header-cell *matHeaderCellDef> Evento </th>
-        <td mat-cell *matCellDef="let element">
-          <span class="badge" [ngClass]="element.eventoMostrado?.toLowerCase()">
-             {{ element.eventoMostrado }}
-          </span>
-        </td>
-      </ng-container>
+              <!-- Separador -->
+              <div class="divider"></div>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+              <div class="time-row">
+                <span class="label">I. Refr:</span>
+                <span class="value">{{ formatTimeAMPM(element.dias[col].inicioRefrigerio ||
+                  element.dias[col].refrigerioInicio) }}</span>
+              </div>
+              <div class="time-row">
+                <span class="label">S. Refr:</span>
+                <span class="value">{{ formatTimeAMPM(element.dias[col].finRefrigerio ||
+                  element.dias[col].refrigerioFin) }}</span>
+              </div>
+            </div>
+
+            <ng-template #noData>
+              <div class="no-data">---</div>
+            </ng-template>
+
+          </td>
+        </ng-container>
+
+        <!-- Columna Total Fija -->
+        <ng-container matColumnDef="col-total" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef class="header-total"> TOTAL HORAS </th>
+          <td mat-cell *matCellDef="let element" class="cell-total">
+            <strong class="total-text">{{ element.totalHoras | number:'1.1-2' }} hrs</strong>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
     </div>
 
     <div class="report-footer">
@@ -122,8 +141,8 @@
     </div>
   </div>
 
-  <div *ngIf="!isLoading && historial.length === 0" class="empty-state no-print">
+  <div *ngIf="!isLoading && dateColumns.length === 0" class="empty-state no-print">
     <mat-icon>assessment</mat-icon>
-    <p>Seleccione un rango de fechas y presione "Consultar" para generar el reporte.</p>
+    <p>Seleccione un rango de fechas y presione "Consultar" para generar la matriz de reporte.</p>
   </div>
 </div>

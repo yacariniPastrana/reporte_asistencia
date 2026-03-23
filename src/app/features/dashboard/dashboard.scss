@@ -40,25 +40,12 @@
   }
 
   .loader-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    /* Mantener dimensionamiento para cuadrícula nativa, flex/animations vienen de global */
     height: 400px;
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-
-    p {
-      margin-top: 20px;
-      font-weight: 500;
-      color: #3f51b5;
-    }
-
-    .small-text {
-      font-size: 0.8rem;
-      color: #999;
-    }
+    justify-content: center; /* Alineación del logo en el recuadro blanco */
   }
 
   .stats-grid {
@@ -155,6 +142,12 @@
       grid-template-columns: 1fr;
     }
 
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
     mat-card {
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
@@ -175,6 +168,47 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+    }
+
+    .birthdays-card {
+      mat-card-header {
+        align-items: center;
+        margin-bottom: 10px;
+
+        .header-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #fce4ec;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .avatar-circle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+      }
+
+      mat-list-item {
+        margin-bottom: 5px;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: #f5f7fa;
+          cursor: pointer;
+        }
+      }
     }
   }
 

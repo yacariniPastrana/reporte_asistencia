@@ -1,60 +1,43 @@
-# 🤖 AGENT & PROJECT CONTEXT: ST Enterprise - Sistema Biométrico
+# 🤖 AGENT & PROJECT CONTEXT: ST Enterprise - Dashboard Biométrico v3.0
 
 ## 📌 Visión General
-**ST Enterprise (Soluciones Tecnológicas Enterprise)** ha desarrollado un Sistema de Sincronización de Asistencia en Tiempo Real. El sistema conecta relojes biométricos físicos con una infraestructura en la nube para gestionar la asistencia laboral de forma automatizada.
+**ST Enterprise (Soluciones Tecnológicas Enterprise)** gestiona un Dashboard de alta gama para el control de asistencia. El sistema destaca por su limpieza visual, animaciones profesionales (logo ensamblado por piezas) y una reportabilidad precisa orientada a la gerencia.
 
-## 🏗️ Arquitectura del Sistema
-- **Hardware:** Relojes Biométricos (Protocolo ADMS/iClock).
-- **Backend:** Java Spring Boot (Desplegado en Render: `https://biometrico.onrender.com`).
+## 🏗️ Arquitectura y Stack
+- **Backend:** Java 17 + Spring Boot (`https://biometrico.onrender.com`).
 - **Base de Datos:** PostgreSQL en Supabase.
-- **Frontend:** Angular (Despliegue sugerido: Vercel).
-- **Timezone:** America/Lima (GMT-5).
+- **Frontend:** Angular 17+ (Stand-alone components) + SCSS.
+- **Librerías UI:** Angular Material, Lucide Icons, SweetAlert2, Chart.js.
+- **Animaciones:** `anime.js` (para el logo `LOGOSTE.svg` de 12 piezas).
 
-## 📊 Modelo de Datos (Base de Datos)
+## 🔑 Gestión de Accesos (Roles)
+| Rol | Usuario (Nombre) | Contraseña (DNI/RUC) | Permisos |
+| :--- | :--- | :--- | :--- |
+| **Administrador** | `STE001` (o Adm) | `ADM1252` | Control total, CRUD, edición de marcas. |
+| **Usuario/Cliente** | `USO001` (o Rony) | `STE2027` | Lectura, consultas y reportes A4. |
 
-### Tabla: `empleados`
-| Campo | Tipo | Descripción |
-| :--- | :--- | :--- |
-| `id` | SERIAL | Primary Key interna. |
-| `id_biometrico` | VARCHAR | ID asignado en el equipo físico (ej: "1"). |
-| `nombre_completo`| VARCHAR | Nombre del empleado (Sync desde Biométrico). |
-| `tipo_documento` | VARCHAR | DNI, CE, RUC. |
-| `numero_documento`| VARCHAR | Número de identidad. |
+## 🧠 Lógica de Negocio y Procesamiento
+### 1. Clasificación de Asistencia (Las 4 Marcas)
+1. **1ra:** INGRESO LABORAL.
+2. **2da:** INICIO REFRIGERIO.
+3. **3ra:** FIN REFRIGERIO.
+4. **4ta:** SALIDA LABORAL.
 
-### Tabla: `marcaciones`
-| Campo | Tipo | Descripción |
-| :--- | :--- | :--- |
-| `id` | SERIAL | Primary Key. |
-| `id_empleado` | INT | Foreign Key -> empleados. |
-| `fecha_dia` | DATE | Fecha de la marca (YYYY-MM-DD). |
-| `fecha_hora` | TIMESTAMP | Timestamp exacto de la marca. |
-| `tipo_registro` | VARCHAR | Descripción del evento (Ingreso, Salida, etc). |
+### 2. Cálculo Automático de Horas
+- **Fórmula:** (Última marca del día) - (Primera marca del día).
+- **Regla del Almuerzo:** Si la salida es posterior a las **15:00**, el sistema resta **1 hora** de refrigerio automáticamente al total diario.
 
-## 🧠 Lógica de Negocio (Las 4 Marcas)
-El sistema clasifica automáticamente las marcas del empleado según el orden de llegada en el mismo día:
-1. **1ra Marca:** INGRESO LABORAL
-2. **2ra Marca:** INICIO REFRIGERIO
-3. **3ra Marca:** FIN REFRIGERIO
-4. **4ta Marca:** SALIDA LABORAL
-*Cualquier marca adicional se registra como "MARCA ADICIONAL".*
+## 📊 Especificaciones del Frontend
+- **Identidad:** Uso obligatorio del logo `LOGOSTE.svg`. Las piezas `A1` a `A12` deben ensamblarse con `anime.js` al cargar.
+- **Reportes:** Generación de documentos en **Hoja A4** mediante `ngx-print`.
+- **UX de Carga:** Debido al "Cold Start" de Render, se requiere un **Spinner de 30 segundos** con un mensaje corporativo de ST Enterprise.
+- **Timezone:** Estricto `America/Lima (GMT-5)` usando Luxon.
 
-## 🌐 API Endpoints (Consumo para Frontend)
-**Base URL:** `https://biometrico.onrender.com/api/v1`
+## 🌐 API Endpoints Principales
+- `POST /auth/login`: Autenticación por roles.
+- `GET /asistencias/procesar-dia`: Corazón del reporte (calcula horas netas por fecha).
+- `POST /asistencias/guardar-manual`: Registro de marcas por omisión (Solo Admin).
+- `PUT /empleados/{id}/documento`: Gestión de datos de identidad.
 
-### Asistencias
-- `GET /asistencias/hoy`: Lista marcas del día actual.
-- `GET /asistencias/historial?desde=YYYY-MM-DD&hasta=YYYY-MM-DD`: Reporte por rango de fechas.
-
-### Empleados
-- `GET /empleados`: Lista completa de personal.
-- `PUT /empleados/{id}/documento?tipo=XXX&numero=123`: Actualiza DNI/CE del empleado.
-
-## 🛠️ Guía para el Frontend (Angular)
-- **DTOs:** El backend entrega `AsistenciaDTO` y `EmpleadoDTO`. No procesar lógica de nombres en el frontend; el backend ya entrega el campo `nombreEmpleado` y `documento` listos para mostrar.
-- **Seguridad:** CORS habilitado (`@CrossOrigin("*")`).
-- **Estado del Servidor:** Render entra en "Sleep" tras 15 min de inactividad. Implementar un Spinner/Loader de al menos 30s para la primera carga.
-
-## 🚀 Notas de Desarrollo
-- Mantener siempre la coherencia con el nombre de la empresa: **ST Enterprise**.
-- El sistema debe ser extremadamente rápido y visualmente limpio (Sugerido: Angular Material).
-- Objetivo final: Mostrar en `solucionestecnologicasenterprise.com` un panel donde la gerencia vea quién está presente y quién faltó.
+---
+**ST Enterprise - Soluciones Tecnológicas de Vanguardia.**

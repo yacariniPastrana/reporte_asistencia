@@ -7,8 +7,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
 import anime from 'animejs';
+import { ApiService } from '../../../core/services/api.service';
+import { LoaderLogoComponent } from '../../../shared/components/loader-logo/loader-logo.component';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +23,9 @@ import anime from 'animejs';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule,
+    LoaderLogoComponent
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss'
@@ -28,6 +33,7 @@ import anime from 'animejs';
 export class LoginComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private apiService = inject(ApiService);
 
   loginForm: FormGroup = this.fb.group({
     username: ['', [Validators.required]],
@@ -35,6 +41,7 @@ export class LoginComponent implements AfterViewInit {
   });
 
   hidePassword = true;
+  isConnectingBackend = false;
 
   ngAfterViewInit(): void {
     anime({
@@ -52,19 +59,29 @@ export class LoginComponent implements AfterViewInit {
 
   onSubmit(): void {
     if (this.loginForm.valid) {
+      this.isConnectingBackend = true;
       const { username, password } = this.loginForm.value;
-      if (username === 'USO001' && password === 'STE2027') {
-        this.loginSuccess('cliente');
-      } else if (username === 'STE001' && password === 'ADM1252') {
-        this.loginSuccess('admin');
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Acceso Denegado',
-          text: 'Usuario o contraseña incorrectos',
-          confirmButtonColor: '#3f51b5'
-        });
-      }
+      const apiPayload = { usuario: username, password };
+      
+      this.apiService.login(apiPayload).subscribe({
+        next: (response) => {
+          this.isConnectingBackend = false;
+          // Asumimos que el backend retorna al menos { rol: 'ADMIN' } o similar
+          // Validamos y guardamos (ajustaremos la lectura del rol según el JSON devuelto si difiere)
+          const rol = response.rol || (username === 'Adm' ? 'admin' : 'cliente');
+          
+          this.loginSuccess(rol.toLowerCase());
+        },
+        error: (err) => {
+          this.isConnectingBackend = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Acceso Denegado',
+            text: 'Usuario o contraseña incorrectos, o el servidor no responde.',
+            confirmButtonColor: '#3f51b5'
+          });
+        }
+      });
     }
   }
 
