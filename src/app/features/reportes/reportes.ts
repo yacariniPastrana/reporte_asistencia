@@ -13,7 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxPrintModule } from 'ngx-print';
 import { ApiService } from '../../core/services/api.service';
-import { LoaderLogoComponent } from '../../shared/components/loader-logo/loader-logo.component';
+
 import { DateTime } from 'luxon';
 import Swal from 'sweetalert2';
 import { forkJoin, of } from 'rxjs';
@@ -43,8 +43,7 @@ export interface EmpleadoReporte {
     MatProgressSpinnerModule,
     MatDividerModule,
     MatSelectModule,
-    NgxPrintModule,
-    LoaderLogoComponent
+    NgxPrintModule
   ],
   templateUrl: './reportes.html',
   styleUrl: './reportes.scss'
@@ -267,6 +266,13 @@ export class ReportesComponent {
     } catch {
       return timeStr.substring(0,5); 
     }
+  }
+
+  formatHoras(horasDecimales: number): string {
+    if (!horasDecimales || isNaN(horasDecimales)) return '0h 0m';
+    const h = Math.floor(horasDecimales);
+    const m = Math.round((horasDecimales - h) * 60);
+    return `${h}h ${m}m`;
   }
 
   get rangeDates(): string {

@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
 import anime from 'animejs';
 import { ApiService } from '../../../core/services/api.service';
-import { LoaderLogoComponent } from '../../../shared/components/loader-logo/loader-logo.component';
+
 
 @Component({
   selector: 'app-login',
@@ -24,8 +24,7 @@ import { LoaderLogoComponent } from '../../../shared/components/loader-logo/load
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
-    LoaderLogoComponent
+    MatProgressSpinnerModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss'

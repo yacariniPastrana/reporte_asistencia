@@ -44,7 +44,7 @@
   </mat-card>
 
   <div *ngIf="isLoading" class="loader-container">
-    <app-loader-logo></app-loader-logo>
+
     <p>Armando consolidado de reportes...</p>
   </div>
 
@@ -123,7 +123,7 @@
         <ng-container matColumnDef="col-total" stickyEnd>
           <th mat-header-cell *matHeaderCellDef class="header-total"> TOTAL HORAS </th>
           <td mat-cell *matCellDef="let element" class="cell-total">
-            <strong class="total-text">{{ element.totalHoras | number:'1.1-2' }} hrs</strong>
+            <strong class="total-text">{{ formatHoras(element.totalHoras) }}</strong>
           </td>
         </ng-container>
 
