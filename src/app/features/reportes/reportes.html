@@ -38,6 +38,8 @@
           <button mat-raised-button color="warn" type="button" *ngIf="isAdmin" (click)="abrirNuevamMarcaManual()">
             <mat-icon>add_alert</mat-icon> MARCA MANUAL
           </button>
+
+
         </div>
       </form>
     </mat-card-content>
@@ -110,6 +112,8 @@
                 <span class="value">{{ formatTimeAMPM(element.dias[col].finRefrigerio ||
                   element.dias[col].refrigerioFin) }}</span>
               </div>
+
+
             </div>
 
             <ng-template #noData>

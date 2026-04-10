@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -9,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiService } from '../../core/services/api.service';
+import { EmpleadoDTO } from '../../core/models/empleado.dto';
 
 import Swal from 'sweetalert2';
 
@@ -31,9 +33,10 @@ import Swal from 'sweetalert2';
 })
 export class EmpleadosComponent implements OnInit {
   private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
-  empleados: any[] = [];
-  filteredEmpleados: any[] = [];
+  empleados: EmpleadoDTO[] = [];
+  filteredEmpleados: EmpleadoDTO[] = [];
   isLoading = true;
   searchTerm = '';
   isAdmin = localStorage.getItem('user_role') === 'admin';
@@ -49,23 +52,25 @@ export class EmpleadosComponent implements OnInit {
 
   cargarEmpleados(): void {
     this.isLoading = true;
-    this.apiService.getEmpleados().subscribe({
-      next: (data) => {
-        this.empleados = data;
-        this.filteredEmpleados = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        Swal.fire('Error', 'No se pudieron cargar los empleados. Reintentando...', 'error');
-        setTimeout(() => this.cargarEmpleados(), 5000);
-      }
-    });
+    this.apiService.getEmpleados()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.empleados = data;
+          this.filteredEmpleados = data;
+          this.isLoading = false;
+        },
+        error: () => {
+          this.isLoading = false;
+          Swal.fire('Error', 'No se pudieron cargar los empleados. Recarga la página e intenta de nuevo.', 'error');
+        }
+      });
   }
 
   filter(value: string): void {
     this.searchTerm = value.toLowerCase();
-    this.filteredEmpleados = this.empleados.filter(e => 
-      e.nombreCompleto.toLowerCase().includes(this.searchTerm) || 
+    this.filteredEmpleados = this.empleados.filter(e =>
+      (e.nombreCompleto ?? '').toLowerCase().includes(this.searchTerm) ||
       e.idBiometrico?.toString().includes(this.searchTerm) ||
       e.numeroDocumento?.includes(this.searchTerm)
     );

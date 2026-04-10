@@ -44,11 +44,29 @@ export class ApiService {
     return this.http.get<EmpleadoDTO[]>(`${this.BASE_URL}/empleados`).pipe(
       map(empleados => {
         if (!Array.isArray(empleados)) return empleados;
-        return empleados.filter(e => {
-          const idStr = String(e.idBiometrico || e.id || '');
-          return idStr !== '1' && idStr !== '2';
-        });
+        return empleados
+          .filter(e => {
+            const idStr = String(e.idBiometrico || e.id || '');
+            return idStr !== '1' && idStr !== '2';
+          })
+          .sort((a, b) => {
+            // Ordenamiento numérico correlativo por idBiometrico
+            const idA = Number(a.idBiometrico) || 0;
+            const idB = Number(b.idBiometrico) || 0;
+            return idA - idB;
+          });
       })
+    );
+  }
+
+  borrarMarcasDelDia(fecha: string): Observable<any> {
+    return this.http.delete(`${this.BASE_URL}/asistencias/dia?fecha=${fecha}`, { responseType: 'text' });
+  }
+
+  borrarMarcaIndividual(idBiometrico: string, fecha: string, tipoRegistro: string): Observable<any> {
+    return this.http.delete(
+      `${this.BASE_URL}/asistencias/marca?idBiometrico=${idBiometrico}&fecha=${fecha}&tipoRegistro=${encodeURIComponent(tipoRegistro)}`,
+      { responseType: 'text' }
     );
   }
 

@@ -127,6 +127,25 @@
             border-bottom: 1px dashed #bbb;
             margin: 3px 0;
           }
+
+          .btn-borrar-celda {
+            margin-top: 4px;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            align-self: flex-end;
+            color: #e53935;
+            opacity: 0.5;
+            transition: opacity 0.2s ease;
+
+            mat-icon {
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+            }
+
+            &:hover { opacity: 1; }
+          }
         }
 
         .no-data {
@@ -172,6 +191,12 @@
           height: 56px;
           padding: 0 25px;
           border-radius: 8px;
+        }
+
+        .btn-delete-marca {
+          background-color: #e53935 !important;
+          color: #fff !important;
+          &:hover { background-color: #c62828 !important; }
         }
       }
     }

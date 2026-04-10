@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -31,6 +32,7 @@ import Swal from 'sweetalert2';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   
   @ViewChild('statsChart') statsChart!: ElementRef;
   private chartInstance: Chart | null = null;
@@ -51,7 +53,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     total: 0,
     ingresos: 0,
     refrigerioIn: 0,
-    refrigerioOut: 0, // Mantenemos propiedad por compatibilidad de visualización
+    refrigerioOut: 0,
     salidas: 0
   };
 
@@ -63,30 +65,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   cargarCumpleanos(): void {
-    this.apiService.getEmpleados().subscribe({
-      next: (empleados) => {
-        const mesActual = DateTime.now().month;
-        const colores = ['#ff4081', '#3f51b5', '#4caf50', '#ff9800', '#00bcd4', '#9c27b0'];
-        
-        let proximos = empleados
-          .filter(e => e.fechaCumpleanos)
-          .map(e => {
-            const dt = DateTime.fromISO(e.fechaCumpleanos!).setLocale('es');
-            return {
-              nombre: e.nombreCompleto || e.nombres || e.nombre,
-              fecha: dt.toFormat('dd \'de\' MMMM'), // Ej: "15 de mayo"
-              mes: dt.month,
-              dia: dt.day,
-              iniciales: this.obtenerIniciales(e.nombreCompleto! || e.nombres! || 'User'),
-              color: colores[Math.floor(Math.random() * colores.length)]
-            };
-          })
-          .filter(e => e.mes === mesActual) // Solo los que cumplen en este mismo mes
-          .sort((a, b) => a.dia - b.dia);   // Ordenar del que cumple primero al último del mes
-        
-        this.cumpleanosMes = proximos;
-      }
-    });
+    this.apiService.getEmpleados()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (empleados) => {
+          const mesActual = DateTime.now().month;
+          const colores = ['#ff4081', '#3f51b5', '#4caf50', '#ff9800', '#00bcd4', '#9c27b0'];
+          this.cumpleanosMes = empleados
+            .filter(e => e.fechaCumpleanos)
+            .map(e => {
+              const dt = DateTime.fromISO(e.fechaCumpleanos!).setLocale('es');
+              return {
+                nombre: e.nombreCompleto || e.nombres || e.nombre,
+                fecha: dt.toFormat("dd 'de' MMMM"),
+                mes: dt.month,
+                dia: dt.day,
+                iniciales: this.obtenerIniciales(e.nombreCompleto! || e.nombres! || 'User'),
+                color: colores[Math.floor(Math.random() * colores.length)]
+              };
+            })
+            .filter(e => e.mes === mesActual)
+            .sort((a, b) => a.dia - b.dia);
+        }
+      });
   }
 
   obtenerIniciales(nombre: string): string {
@@ -104,33 +105,37 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   cargarDatos(): void {
     this.isLoading = true;
-    this.apiService.getAsistenciasHoy().subscribe({
-      next: (data) => {
-        this.asistencias = data;
-        this.procesarStats(data);
-        this.isLoading = false;
-        setTimeout(() => this.updateOrCreateChart(), 100);
-      },
-      error: () => {
-        this.error = "Error al cargar datos.";
-        this.isLoading = false;
-      }
-    });
+    this.apiService.getAsistenciasHoy()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.asistencias = data;
+          this.procesarStats(data);
+          this.isLoading = false;
+          setTimeout(() => this.updateOrCreateChart(), 100);
+        },
+        error: () => {
+          this.error = "Error al cargar datos.";
+          this.isLoading = false;
+        }
+      });
   }
 
   cargarDatosSilencioso(): void {
     this.isRefreshing = true;
-    this.apiService.getAsistenciasHoy().subscribe({
-      next: (data) => {
-        this.asistencias = data;
-        this.procesarStats(data);
-        this.updateOrCreateChart();
-        this.isRefreshing = false;
-      },
-      error: () => {
-        this.isRefreshing = false;
-      }
-    });
+    this.apiService.getAsistenciasHoy()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.asistencias = data;
+          this.procesarStats(data);
+          this.updateOrCreateChart();
+          this.isRefreshing = false;
+        },
+        error: () => {
+          this.isRefreshing = false;
+        }
+      });
   }
 
   manualRefresh(): void {
@@ -158,56 +163,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   procesarStats(data: AsistenciaDTO[]): void {
-    // Agrupación por empleado con todas sus marcas
-    const empleadosMap = new Map<string, AsistenciaDTO[]>();
-    
+    // Conteo directo por tipoRegistro tal como lo registra el biométrico
+    let ingresos = 0;
+    let refrigerioIn = 0;
+    let refrigerioOut = 0;
+    let salidas = 0;
+
     data.forEach(a => {
-      const key = a.documento || a.idBiometrico || String(a.empleadoId);
-      if (!empleadosMap.has(key)) {
-        empleadosMap.set(key, []);
-      }
-      empleadosMap.get(key)!.push(a);
-    });
+      const tipo = (a.tipoRegistro || '').toLowerCase().trim();
 
-    let soloIngresos = 0;
-    let salidasCompletas = 0;
-    let enRefrigerio = 0;
-
-    empleadosMap.forEach(marcas => {
-      // Orden cronológico estricto de las marcas del día para ese empleado
-      marcas.sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
-      const cantidad = marcas.length;
-      
-      if (cantidad === 0) return;
-
-      if (cantidad === 1) {
-        // [1] Primera marca: Mantenido en el cuadro de ingreso (Pendiente)
-        soloIngresos++;
-      } else if (cantidad === 2) {
-        // [2] Segunda marca: Inicialmente refrigerio, pero aplicamos la regla condicional
-        const horaStr = marcas[1].hora || '00:00:00';
-        const horaFin = parseInt(horaStr.split(':')[0], 10) || 0;
-        
-        // Si la segunda marca superó la hora del almuerzo (ej. 15:00 hrs o más) asume salida.
-        if (horaFin >= 15) {
-          salidasCompletas++;
-        } else {
-          enRefrigerio++;
-        }
-      } else if (cantidad === 3) {
-        // [3] Tercera marca: Fin del refrigerio, retornó al trabajo (vuelve a Pendientes)
-        soloIngresos++;
-      } else if (cantidad >= 4) {
-        // [4+] Cuarta marca a más: Salida laboral consolidada
-        salidasCompletas++;
+      if (tipo.includes('ingreso')) {
+        ingresos++;
+      } else if (tipo.includes('inicio') || tipo.includes('salida refr')) {
+        refrigerioIn++;
+      } else if (tipo.includes('fin') || tipo.includes('regreso') || tipo.includes('retorno')) {
+        refrigerioOut++;
+      } else if (tipo.includes('salida')) {
+        salidas++;
       }
     });
 
-    this.stats.total = empleadosMap.size;
-    this.stats.ingresos = soloIngresos;
-    this.stats.salidas = salidasCompletas;
-    this.stats.refrigerioIn = enRefrigerio;
-    this.stats.refrigerioOut = 0; 
+    this.stats.total = data.length;
+    this.stats.ingresos = ingresos;
+    this.stats.refrigerioIn = refrigerioIn;
+    this.stats.refrigerioOut = refrigerioOut;
+    this.stats.salidas = salidas;
   }
 
   updateOrCreateChart(): void {
@@ -217,22 +197,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.chartInstance.destroy();
     }
 
-    // Calculamos faltante en caso haya algo raro pero con logica unica debe ser 0.
-    const asignados = this.stats.ingresos + this.stats.refrigerioIn + this.stats.refrigerioOut + this.stats.salidas;
-    const otros = this.stats.total > asignados ? this.stats.total - asignados : 0;
-
     this.chartInstance = new Chart(this.statsChart.nativeElement, {
       type: 'doughnut',
       data: {
-        labels: ['Pendientes (Solo Ingreso)', 'En Refrigerio', 'Completados (Salidas)', 'Otros'],
+        labels: ['Ingreso Laboral', 'Inicio Refrigerio', 'Fin Refrigerio', 'Salida Laboral'],
         datasets: [{
           data: [
             this.stats.ingresos,
-            this.stats.refrigerioIn + this.stats.refrigerioOut,
-            this.stats.salidas,
-            otros
+            this.stats.refrigerioIn,
+            this.stats.refrigerioOut,
+            this.stats.salidas
           ],
-          backgroundColor: ['#3f51b5', '#ff4081', '#4caf50', '#ffc107'],
+          backgroundColor: ['#3f51b5', '#ff9800', '#4caf50', '#f44336'],
           borderWidth: 1
         }]
       },
