@@ -39,7 +39,7 @@
 .matrix-table .no-data { color:#bbb; text-align:center; font-style:italic; margin-top:15px; }
 .matrix-table .header-total { width:120px; border-left:2px solid #ddd; }
 .matrix-table .cell-total { background-color:#f5f7fa !important; text-align:center; border-left:2px solid #ddd; }
-.matrix-table .cell-total .total-text { color:#2e7d32; font-size:1.1rem; }
+.matrix-table .cell-total .total-text { color:#3f51b5; font-size:1.1rem; }
 
 .day-data { display:flex; flex-direction:column; gap:3px; }
 .day-data .time-row {
@@ -48,6 +48,7 @@
 }
 .day-data .time-row .label { color:#777; font-weight:600; font-size:.65rem; margin-right:6px; }
 .day-data .time-row .value { color:#222; font-family:'Roboto Mono',monospace; font-size:.82rem; font-weight:700; letter-spacing:-.5px; }
+.day-data .time-row .value.end-time { color:#3f51b5; }
 .day-data .divider { height:1px; border-bottom:1px dashed #bbb; margin:3px 0; }
 .day-data .btn-borrar-celda {
   margin-top:4px; width:24px; height:24px; line-height:24px;

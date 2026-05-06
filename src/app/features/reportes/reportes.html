@@ -95,22 +95,22 @@
                 <span class="value">{{ formatTimeAMPM(element.dias[col].entrada) }}</span>
               </div>
               <div class="time-row">
-                <span class="label">Sal:</span>
-                <span class="value">{{ formatTimeAMPM(element.dias[col].salida) }}</span>
+                <span class="label">I. Refr:</span>
+                <span class="value">{{ formatTimeAMPM(element.dias[col].inicioRefrigerio ||
+                  element.dias[col].refrigerioInicio) }}</span>
               </div>
 
               <!-- Separador -->
               <div class="divider"></div>
 
               <div class="time-row">
-                <span class="label">I. Refr:</span>
-                <span class="value">{{ formatTimeAMPM(element.dias[col].inicioRefrigerio ||
-                  element.dias[col].refrigerioInicio) }}</span>
-              </div>
-              <div class="time-row">
                 <span class="label">S. Refr:</span>
                 <span class="value">{{ formatTimeAMPM(element.dias[col].finRefrigerio ||
                   element.dias[col].refrigerioFin) }}</span>
+              </div>
+              <div class="time-row">
+                <span class="label">Sal:</span>
+                <span class="value">{{ formatTimeAMPM(element.dias[col].salida) }}</span>
               </div>
 
 
