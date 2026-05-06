@@ -135,7 +135,7 @@ export class ReportesComponent implements OnInit {
             if (res && res.data && Object.keys(res.data).length > 0) {
               registrosUtiles++;
               this.dataSource[res.indexRow].dias[res.fecha] = res.data;
-              this.dataSource[res.indexRow].totalHoras += Number(res.data.horasTrabajadas || 0);
+              this.dataSource[res.indexRow].totalHoras += this.calcularHorasAjustadas(res.data);
             }
           }
           this.dataSource = [...this.dataSource];
@@ -158,7 +158,11 @@ export class ReportesComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (emps) => {
-            this.empleados = emps;
+            this.empleados = emps.slice().sort((a, b) => {
+              const idA = Number(a.idBiometrico ?? a.id ?? 0);
+              const idB = Number(b.idBiometrico ?? b.id ?? 0);
+              return idA - idB;
+            });
             this.empleadosCargados = true;
             ejecutar();
           },
@@ -363,6 +367,46 @@ export class ReportesComponent implements OnInit {
         });
       }
     });
+  }
+
+  // ── CÁLCULO DE HORAS AJUSTADAS POR REFRIGERIO REAL ────────────────────────
+  // Si el refrigerio real supera los 60 minutos, se descuenta el tiempo exacto
+  // en lugar del fijo de 1 hora que aplica el backend.
+  private calcularHorasAjustadas(dia: any): number {
+    const horasBackend = Number(dia.horasTrabajadas || 0);
+
+    // Obtener marcas de inicio y fin de refrigerio
+    const inicioStr: string = dia.inicioRefrigerio || dia.refrigerioInicio || '';
+    const finStr: string    = dia.finRefrigerio    || dia.refrigerioFin    || '';
+
+    // Si no hay ambas marcas de refrigerio, devolver lo que calculó el backend
+    if (!inicioStr || !finStr) return horasBackend;
+
+    // Parsear las horas de refrigerio (formato "HH:mm:ss" o "HH:mm:ss.SSSSSS")
+    const parsearHora = (str: string): number => {
+      const partes = str.split(':');
+      if (partes.length < 2) return NaN;
+      const h = parseInt(partes[0], 10);
+      const m = parseInt(partes[1], 10);
+      const s = parseFloat(partes[2] || '0');
+      return h * 3600 + m * 60 + s; // total en segundos
+    };
+
+    const inicioSeg = parsearHora(inicioStr);
+    const finSeg    = parsearHora(finStr);
+
+    if (isNaN(inicioSeg) || isNaN(finSeg) || finSeg <= inicioSeg) return horasBackend;
+
+    const refrigerioRealMin = (finSeg - inicioSeg) / 60; // duración real en minutos
+
+    // Solo ajustar si el refrigerio real supera los 60 minutos
+    if (refrigerioRealMin <= 60) return horasBackend;
+
+    // El backend ya descontó 1 hora fija. Calculamos la diferencia extra a descontar.
+    const minutosExtra = refrigerioRealMin - 60;
+    const horasExtra   = minutosExtra / 60;
+
+    return Math.max(0, horasBackend - horasExtra);
   }
 
   // Funciones de formateo UI

@@ -33,7 +33,7 @@ import Swal from 'sweetalert2';
 export class DashboardComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);
   private destroyRef = inject(DestroyRef);
-  
+
   @ViewChild('statsChart') statsChart!: ElementRef;
   private chartInstance: Chart | null = null;
 
@@ -41,11 +41,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isLoading = true;
   isRefreshing = false;
   error: string | null = null;
-  
+
   // Rate limiting properties
   refreshCount = 0;
   cooldownEnd: Date | null = null;
-  
+
   fechaHoy = new Date();
   displayedColumns: string[] = ['empleado', 'documento', 'tipo', 'fecha_hora'];
 
@@ -109,7 +109,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          this.asistencias = data;
+          this.asistencias = data.slice().sort((a, b) => {
+            const dtA = (a.fecha ?? '') + 'T' + (a.hora ?? '');
+            const dtB = (b.fecha ?? '') + 'T' + (b.hora ?? '');
+            return dtB.localeCompare(dtA); // descendente: más reciente primero
+          });
           this.procesarStats(data);
           this.isLoading = false;
           setTimeout(() => this.updateOrCreateChart(), 100);
@@ -127,7 +131,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          this.asistencias = data;
+          this.asistencias = data.slice().sort((a, b) => {
+            const dtA = (a.fecha ?? '') + 'T' + (a.hora ?? '');
+            const dtB = (b.fecha ?? '') + 'T' + (b.hora ?? '');
+            return dtB.localeCompare(dtA); // descendente: más reciente primero
+          });
           this.procesarStats(data);
           this.updateOrCreateChart();
           this.isRefreshing = false;
@@ -156,7 +164,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.refreshCount >= 5) {
       // Set a 1-hour cooldown
       this.cooldownEnd = new Date(new Date().getTime() + 60 * 60 * 1000);
-      this.refreshCount = 0; 
+      this.refreshCount = 0;
     }
 
     this.cargarDatosSilencioso();
