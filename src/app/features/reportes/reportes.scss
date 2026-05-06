@@ -1,457 +1,115 @@
-.reportes-container {
-  width: 100%;
-  margin: 0 auto;
-  padding-bottom: 50px;
+/* ===== REPORTES ===== */
+.reportes-container { width:100%; margin:0 auto; padding-bottom:50px; }
 
-  .header-section {
-    margin-bottom: 25px;
+.reportes-container .header-section { margin-bottom:25px; }
+.reportes-container .header-section h1 { margin-bottom:5px; color:#333; }
+.reportes-container .header-section p  { color:#777; }
 
-    h1 {
-      margin-bottom: 5px;
-      color: #333;
-    }
-
-    p {
-      color: #777;
-    }
-  }
-
-  .filter-card {
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-    margin-bottom: 30px;
-
-    .filter-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      align-items: center;
-      padding: 10px 0;
-
-      mat-form-field {
-        flex: 1;
-        min-width: 200px;
-      }
-
-      .total-summary {
-        background: #e8eaf6;
-        border-radius: 4px;
-        margin-top: 15px;
-        padding: 15px;
-        text-align: right;
-
-        h3 {
-          color: #3f51b5;
-          font-weight: bold;
-          margin: 0;
-        }
-      }
-
-      // ESTILOS DE MATRIZ PIVOT
-      .matrix-table {
-        min-width: 1000px;
-        overflow-x: auto;
-
-        th {
-          font-weight: 600;
-          font-size: 0.75rem;
-          color: #555;
-          background-color: #f8f9fa !important;
-          border-bottom: 2px solid #ddd;
-          text-align: center;
-          padding: 8px 4px;
-        }
-
-        .header-empleado {
-          text-align: left;
-          width: 140px;
-          min-width: 140px;
-        }
-
-        .cell-empleado {
-          text-align: left;
-          background-color: #fff !important;
-          border-right: 2px solid #e0e0e0;
-          padding: 8px 6px;
-
-          strong {
-            color: #3f51b5;
-            font-size: 0.85rem;
-          }
-
-          .text-muted {
-            color: #888;
-            font-size: 0.7rem;
-          }
-        }
-
-        .cell-day {
-          vertical-align: top;
-          padding: 6px 4px;
-          border-right: 1px dashed #eee;
-          min-width: 100px;
-        }
-
-        .day-data {
-          display: flex;
-          flex-direction: column;
-          gap: 3px;
-
-          .time-row {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between; /* Alineación a extremos como recibo */
-            align-items: baseline;
-            width: 100%;
-            margin-bottom: 2px;
-            white-space: nowrap;
-
-            .label {
-              color: #777;
-              font-weight: 600;
-              font-size: 0.65rem;
-              margin-right: 6px;
-            }
-
-            .value {
-              color: #222;
-              font-family: 'Roboto Mono', monospace;
-              font-size: 0.82rem;
-              font-weight: 700;
-              letter-spacing: -0.5px; /* Comprimir los números levemente */
-            }
-          }
-
-          .divider {
-            height: 1px;
-            border-bottom: 1px dashed #bbb;
-            margin: 3px 0;
-          }
-
-          .btn-borrar-celda {
-            margin-top: 4px;
-            width: 24px;
-            height: 24px;
-            line-height: 24px;
-            align-self: flex-end;
-            color: #e53935;
-            opacity: 0.5;
-            transition: opacity 0.2s ease;
-
-            mat-icon {
-              font-size: 18px;
-              width: 18px;
-              height: 18px;
-            }
-
-            &:hover { opacity: 1; }
-          }
-        }
-
-        .no-data {
-          color: #bbb;
-          text-align: center;
-          font-style: italic;
-          margin-top: 15px;
-        }
-
-        .header-total {
-          width: 120px;
-          border-left: 2px solid #ddd;
-        }
-
-        .cell-total {
-          background-color: #f5f7fa !important;
-          text-align: center;
-          border-left: 2px solid #ddd;
-
-          .total-text {
-            color: #2e7d32;
-            font-size: 1.1rem;
-          }
-        }
-      }
-
-      .actions {
-        display: flex;
-        gap: 15px;
-        margin-top: -22px;
-        /* Empuja los botones un poco más arriba para alinearlos con los inputs */
-
-        @media (max-width: 600px) {
-          flex-direction: column;
-          margin-top: 10px;
-
-          button {
-            width: 100%;
-          }
-        }
-
-        button {
-          height: 56px;
-          padding: 0 25px;
-          border-radius: 8px;
-        }
-
-        .btn-delete-marca {
-          background-color: #e53935 !important;
-          color: #fff !important;
-          &:hover { background-color: #c62828 !important; }
-        }
-      }
-    }
-  }
-
-    // El loader y keyframes globales se ubican en styles.scss
-
-  .empty-state {
-    text-align: center;
-    padding: 100px 0;
-    color: #999;
-
-    mat-icon {
-      font-size: 60px;
-      width: 60px;
-      height: 60px;
-      margin-bottom: 20px;
-    }
-  }
-
-  // --- ESTILOS DE ÁREA DE IMPRESIÓN ---
-  .print-area {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    color: #000;
-
-    .report-header {
-      margin-bottom: 20px;
-
-      .header-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 15px;
-
-        .logo-company {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-
-          .company-info {
-            h2 {
-              margin: 0;
-              font-size: 1.25rem;
-              color: #1a237e;
-              font-weight: 700;
-              letter-spacing: 0.5px;
-            }
-
-            p {
-              margin: 0;
-              color: #555;
-              font-size: 0.85rem;
-            }
-          }
-        }
-
-        .report-title {
-          text-align: right;
-
-          h1 {
-            margin: 0;
-            font-size: 1.25rem;
-            color: #333;
-            letter-spacing: 0.5px;
-            font-weight: 700;
-          }
-
-          p {
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 3px;
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
-
-    .table-container {
-      overflow-x: auto;
-      width: 100%;
-      margin-bottom: 30px;
-
-      .report-table {
-        width: 100%;
-        border: 1px solid #ddd;
-        min-width: 600px;
-
-        th {
-          background-color: #f5f5f5 !important;
-          color: #000 !important;
-          font-weight: 700;
-          border-bottom: 2px solid #ccc;
-          padding: 12px !important;
-        }
-
-        td {
-          padding: 12px !important;
-          border-bottom: 1px solid #eee;
-        }
-
-        .badge {
-          padding: 4px 10px;
-          border-radius: 4px;
-          font-size: 0.75rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          display: inline-block;
-
-          &.ingreso {
-            background: #e8eaf6 !important;
-            color: #3f51b5 !important;
-          }
-
-          &.inicio {
-            background: #fce4ec !important;
-            color: #d81b60 !important;
-          }
-
-          &.fin {
-            background: #fce4ec !important;
-            color: #d81b60 !important;
-          }
-
-          &.salida {
-            background: #e8f5e9 !important;
-            color: #2e7d32 !important;
-          }
-        }
-      }
-
-      // Cierra .report-table
-    }
-
-    // Cierra .table-container
-
-    .report-footer {
-      margin-top: 50px;
-
-      .footer-content {
-        display: flex;
-        justify-content: space-between;
-        padding-top: 10px;
-        color: #777;
-        font-size: 0.8rem;
-      }
-    }
-  }
+.reportes-container .filter-card {
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.05) !important;
+  margin-bottom:30px;
 }
 
-// CONFIGURACIÓN FINAL PARA IMPRESIÓN A4
+.reportes-container .filter-form {
+  display:flex; flex-wrap:wrap; gap:20px; align-items:center; padding:10px 0;
+}
+.reportes-container .filter-form mat-form-field { flex:1; min-width:200px; }
+
+.reportes-container .total-summary {
+  background:#e8eaf6; border-radius:4px; margin-top:15px; padding:15px; text-align:right;
+}
+.reportes-container .total-summary h3 { color:#3f51b5; font-weight:bold; margin:0; }
+
+/* --- Matriz pivot --- */
+.matrix-table { min-width:1000px; overflow-x:auto; }
+.matrix-table th {
+  font-weight:600; font-size:.75rem; color:#555;
+  background-color:#f8f9fa !important; border-bottom:2px solid #ddd;
+  text-align:center; padding:8px 4px;
+}
+.matrix-table .header-empleado { text-align:left; width:140px; min-width:140px; }
+.matrix-table .cell-empleado {
+  text-align:left; background-color:#fff !important;
+  border-right:2px solid #e0e0e0; padding:8px 6px;
+}
+.matrix-table .cell-empleado strong { color:#3f51b5; font-size:.85rem; }
+.matrix-table .cell-empleado .text-muted { color:#888; font-size:.7rem; }
+.matrix-table .cell-day { vertical-align:top; padding:6px 4px; border-right:1px dashed #eee; min-width:100px; }
+.matrix-table .no-data { color:#bbb; text-align:center; font-style:italic; margin-top:15px; }
+.matrix-table .header-total { width:120px; border-left:2px solid #ddd; }
+.matrix-table .cell-total { background-color:#f5f7fa !important; text-align:center; border-left:2px solid #ddd; }
+.matrix-table .cell-total .total-text { color:#2e7d32; font-size:1.1rem; }
+
+.day-data { display:flex; flex-direction:column; gap:3px; }
+.day-data .time-row {
+  display:flex; justify-content:space-between; align-items:baseline;
+  width:100%; margin-bottom:2px; white-space:nowrap;
+}
+.day-data .time-row .label { color:#777; font-weight:600; font-size:.65rem; margin-right:6px; }
+.day-data .time-row .value { color:#222; font-family:'Roboto Mono',monospace; font-size:.82rem; font-weight:700; letter-spacing:-.5px; }
+.day-data .divider { height:1px; border-bottom:1px dashed #bbb; margin:3px 0; }
+.day-data .btn-borrar-celda {
+  margin-top:4px; width:24px; height:24px; line-height:24px;
+  align-self:flex-end; color:#e53935; opacity:.5; transition:opacity .2s ease;
+}
+.day-data .btn-borrar-celda mat-icon { font-size:18px; width:18px; height:18px; }
+.day-data .btn-borrar-celda:hover { opacity:1; }
+
+/* --- Acciones --- */
+.reportes-container .actions { display:flex; gap:15px; margin-top:-22px; }
+.reportes-container .actions button { height:56px; padding:0 25px; border-radius:8px; }
+.reportes-container .actions .btn-delete-marca { background-color:#e53935 !important; color:#fff !important; }
+.reportes-container .actions .btn-delete-marca:hover { background-color:#c62828 !important; }
+@media (max-width:600px) {
+  .reportes-container .actions { flex-direction:column; margin-top:10px; }
+  .reportes-container .actions button { width:100%; }
+}
+
+/* --- Estado vacío --- */
+.reportes-container .empty-state { text-align:center; padding:100px 0; color:#999; }
+.reportes-container .empty-state mat-icon { font-size:60px; width:60px; height:60px; margin-bottom:20px; }
+
+/* ===== ÁREA DE IMPRESIÓN ===== */
+.print-area { background:#fff; padding:40px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.05); color:#000; }
+.print-area .report-header { margin-bottom:20px; }
+.print-area .header-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:15px; }
+.print-area .logo-company { display:flex; align-items:center; gap:15px; }
+.print-area .company-info h2 { margin:0; font-size:1.25rem; color:#1a237e; font-weight:700; letter-spacing:.5px; }
+.print-area .company-info p  { margin:0; color:#555; font-size:.85rem; }
+.print-area .report-title { text-align:right; }
+.print-area .report-title h1 { margin:0; font-size:1.25rem; color:#333; letter-spacing:.5px; font-weight:700; }
+.print-area .report-title p  { color:#666; font-size:.9rem; margin-top:3px; margin-bottom:0; }
+.print-area .table-container { overflow-x:auto; width:100%; margin-bottom:30px; }
+.print-area .report-table { width:100%; border:1px solid #ddd; min-width:600px; }
+.print-area .report-table th { background-color:#f5f5f5 !important; color:#000 !important; font-weight:700; border-bottom:2px solid #ccc; padding:12px !important; }
+.print-area .report-table td { padding:12px !important; border-bottom:1px solid #eee; }
+.print-area .badge { padding:4px 10px; border-radius:4px; font-size:.75rem; font-weight:600; text-transform:uppercase; display:inline-block; }
+.print-area .badge.ingreso { background:#e8eaf6 !important; color:#3f51b5 !important; }
+.print-area .badge.inicio,
+.print-area .badge.fin    { background:#fce4ec !important; color:#d81b60 !important; }
+.print-area .badge.salida  { background:#e8f5e9 !important; color:#2e7d32 !important; }
+.print-area .report-footer { margin-top:50px; }
+.print-area .footer-content { display:flex; justify-content:space-between; padding-top:10px; color:#777; font-size:.8rem; }
+
+/* ===== IMPRESIÓN A4 ===== */
 @media print {
-  @page {
-    size: A4 landscape;
-    margin: 10mm;
-  }
-
-  body {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    background: white !important;
-  }
-
-  .no-print {
-    display: none !important;
-  }
-
-  .reportes-container {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .print-area {
-    box-shadow: none !important;
-    padding: 0 !important;
-    width: 100% !important;
-    background: white;
-  }
-
-  .table-container {
-    width: 100% !important;
-    overflow: visible !important;
-    margin-bottom: 0 !important;
-    /* Remove bottom margin for print */
-  }
-
-  /* Forzar que la tabla se expanda totalmente al 100% de la hoja */
-  .matrix-table {
-    width: 100% !important;
-    max-width: 100% !important;
-    font-size: 0.7rem !important;
-    table-layout: auto !important;
-  }
-
-  .header-empleado {
-    width: 120px !important;
-    min-width: 120px !important;
-  }
-
-  .cell-day {
-    min-width: 60px !important;
-    padding: 4px 6px !important;
-  }
-
-  /* Columna final total horas alineada a la derecha en la tabla o ocupando resto */
-  .header-total,
-  .cell-total {
-    text-align: right !important;
-    padding-right: 15px !important;
-    min-width: 80px !important;
-  }
-
-  .time-row {
-    justify-content: space-between !important;
-    width: 100% !important;
-  }
-  .time-row .value {
-    font-size: 0.65rem !important;
-    letter-spacing: -0.5px !important;
-  }
-  .time-row .label {
-    font-size: 0.55rem !important;
-    margin-right: 3px !important;
-  }
-
-  .report-header {
-    margin-bottom: 15px;
-  }
-
-  /* Desactivar sticky element en impresion (Bug crónico de Chrome que los mueve al medio) */
-  .mat-column-col-empleado,
-  .mat-column-col-total {
-    position: static !important;
-  }
-
-  .mat-mdc-table {
-    border: none !important;
-    box-shadow: 0 0 0 1px #eee !important;
-    border-radius: 8px !important;
-  }
-
-  th.mat-mdc-header-cell {
-    border-bottom: 2px solid #eee !important;
-    background-color: #f8f9fb !important;
-    padding: 10px 15px !important; /* Espacio cómodo pero moderno */
-    font-size: 0.85rem !important;
-    color: #333 !important;
-  }
-
-  td.mat-mdc-cell {
-    border-bottom: 1px solid #f0f0f0 !important;
-    padding: 10px 15px !important; /* Espacio cómodo pero moderno */
-    font-size: 0.85rem !important;
-  }
+  @page { size:A4 landscape; margin:10mm; }
+  body { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; background:#fff !important; }
+  .no-print { display:none !important; }
+  .reportes-container { padding:0 !important; margin:0 !important; max-width:100% !important; }
+  .print-area { box-shadow:none !important; padding:0 !important; width:100% !important; background:#fff; }
+  .table-container { width:100% !important; overflow:visible !important; margin-bottom:0 !important; }
+  .matrix-table { width:100% !important; max-width:100% !important; font-size:.7rem !important; table-layout:auto !important; }
+  .header-empleado { width:120px !important; min-width:120px !important; }
+  .cell-day { min-width:60px !important; padding:4px 6px !important; }
+  .header-total, .cell-total { text-align:right !important; padding-right:15px !important; min-width:80px !important; }
+  .time-row { justify-content:space-between !important; width:100% !important; }
+  .time-row .value { font-size:.65rem !important; letter-spacing:-.5px !important; }
+  .time-row .label { font-size:.55rem !important; margin-right:3px !important; }
+  .report-header { margin-bottom:15px; }
+  .mat-column-col-empleado, .mat-column-col-total { position:static !important; }
+  .mat-mdc-table { border:none !important; box-shadow:0 0 0 1px #eee !important; border-radius:8px !important; }
+  th.mat-mdc-header-cell { border-bottom:2px solid #eee !important; background-color:#f8f9fb !important; padding:10px 15px !important; font-size:.85rem !important; color:#333 !important; }
+  td.mat-mdc-cell { border-bottom:1px solid #f0f0f0 !important; padding:10px 15px !important; font-size:.85rem !important; }
 }
